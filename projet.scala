@@ -23,6 +23,28 @@ object MyApp {
             data supp col 
         }
     }
+
+    def preprocessing(data :){
+        // split train test data 
+        
+        // cleaning data 
+
+        // process null val 
+
+        // change categ val ?
+
+        // choose col 
+
+        // choose crossing cols 
+
+    }
+
+    def test_model() {
+        // print accuracy / tab to choose best parameters ? 
+
+        // compare models 
+        
+    }
 }
 
 
