@@ -7,14 +7,24 @@ import org.apache.log4j.{Level, Logger}
 object MyApp {
     def main(args : Array[String]) {
         Logger.getLogger("org").setLevel(Level.WARN)
+
+        // config de l'app a changer apres 
+        
         val conf = new SparkConf().setAppName("My first Spark application")
         val sc = new SparkContext(conf)
 
+        // exemple 
         //val data = sc.textFile("file:///tmp/book/98.txt")
-        val data = sc.textFile("hdfs:///tmp/book/98.txt")
-        val numAs = data.filter(line => line.contains("a")).count()
-        val numBs = data.filter(line => line.contains("b")).count()
-        println(s"Lines with a: ${numAs}, Lines with b: ${numBs}")
+        // val data = sc.textFile("hdfs:///tmp/book/98.txt")
+        // val numAs = data.filter(line => line.contains("a")).count()
+        // val numBs = data.filter(line => line.contains("b")).count()
+        // println(s"Lines with a: ${numAs}, Lines with b: ${numBs}")
+        
+
+        // load data 
+        // preprocessing 
+        // model training 
+        // model test 
     }
     
     def delete_cols(data : DataFrame) {
@@ -26,7 +36,7 @@ object MyApp {
 
     def preprocessing(data :){
         // split train test data 
-        
+
         // cleaning data 
 
         // process null val 
