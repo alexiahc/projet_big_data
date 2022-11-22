@@ -22,21 +22,23 @@ object MyApp {
         
 
         // load data -> arg 1 = fichier csv des données 
-        val data = sc.read.csv(args[1])
+        // var data = sc.read.option("header", true).csv(args[1])
+        var data = spark.read.option("header", true).csv("/Users/alexi/Documents/GitHub/projet_big_data/2000.csv")
+        
+        data = data.drop("ArrTime", "ActualElapsedTime", "AirTime", "TaxiIn", "Diverted", "CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", "LateAircraftDelay")
+
         // preprocessing 
+        
+        
         // model training 
         // model test 
     }
     
-    def delete_cols(data : DataFrame) {
-        cols = [ArrTime, ActualElapsedTime, AirTime, TaxiIn, Diverted, CarrierDelay, WeatherDelay, NASDelay, SecurityDelay, LateAircraftDelay]
-        for (col in cols){
-            data supp col 
-        }
-    }
+    
 
     def preprocessing(data :){
-        // split train test data 
+        // split train test data ; target ArrDelay 
+        var Array(training, test) = data.randomSplit(Array[Double](0.8, 0.2))
 
         // cleaning data 
 
