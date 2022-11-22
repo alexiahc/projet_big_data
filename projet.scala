@@ -9,7 +9,7 @@ object MyApp {
         Logger.getLogger("org").setLevel(Level.WARN)
 
         // config de l'app a changer apres 
-        
+
         val conf = new SparkConf().setAppName("My first Spark application")
         val sc = new SparkContext(conf)
 
@@ -21,7 +21,8 @@ object MyApp {
         // println(s"Lines with a: ${numAs}, Lines with b: ${numBs}")
         
 
-        // load data 
+        // load data -> arg 1 = fichier csv des données 
+        val data = sc.read.csv(args[1])
         // preprocessing 
         // model training 
         // model test 
