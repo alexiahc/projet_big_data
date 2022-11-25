@@ -47,3 +47,40 @@ plt.hist(d.Year)
 
 # meme chose pour dest (repartition similaire) 
 
+# Tri des colonnes
+
+# cancellation code -> inutiles 
+# changer nan en 0 pour DepTime -> correspond à non départ et à nan pour y_train 
+# valeur de non arrivage pour y_train ? 
+
+y_train.describe()
+# min à -90 et max à 100 
+# choisit une valeur par défault ? ou peut garder nan ? 
+
+# Flight number pas utile ? 
+
+#%%
+
+import seaborn as sns 
+train = X_train.copy()
+train['ArrDelay'] = y_train.copy()
+
+correlation = train.corr()
+k= train.shape[1]
+cols = correlation.nlargest(k,'ArrDelay')['ArrDelay'].index
+
+f, ax = plt.subplots(figsize = (14,12))
+sns.heatmap(np.corrcoef(train[cols].values.T), vmax=.8, linewidths=0.01,square=True,annot=True,cmap='viridis',
+            linecolor="white",xticklabels = cols.values ,annot_kws = {'size':12},yticklabels = cols.values)
+
+
+
+
+
+
+
+
+
+
+
+
