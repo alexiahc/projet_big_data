@@ -59,6 +59,11 @@ y_train.describe()
 
 # Flight number pas utile ? 
 
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler
+
+
+
 #%%
 
 import seaborn as sns 
