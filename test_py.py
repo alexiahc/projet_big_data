@@ -24,7 +24,14 @@ X = df.drop('ArrDelay', axis=1)
 X_train, X_test, y_train, y_test = train_test_split (X, y,
                                                      test_size=0.6, random_state=1)
 
+X_train.dtypes
+
+X_train.groupby('UniqueCarrier').count()
 # col UniqueCarrier -> 11 diff peut faire one hot encoding 
+
+d = X_train.groupby('TailNum').count()
+d.sort_values(by=['Year'])
+plt.hist(d.Year[d.Year<1400])
 
 # TailNum 4030 diff -> garde les plus nombreux ? UNKNOWN 52000, max 1350, min à 1 
 # a voir si untilise slmt les 10 avec le plus de repetition ou si fait des quantiles 
