@@ -22,7 +22,7 @@ y = df.ArrDelay
 X = df.drop('ArrDelay', axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split (X, y,
-                                                     test_size=0.6, random_state=1)
+                                                     test_size=0.5, random_state=1)
 
 X_train.dtypes
 
@@ -36,3 +36,14 @@ plt.hist(d.Year[d.Year<1400])
 # TailNum 4030 diff -> garde les plus nombreux ? UNKNOWN 52000, max 1350, min à 1 
 # a voir si untilise slmt les 10 avec le plus de repetition ou si fait des quantiles 
 # en fonction du nombre d'occurences ? 
+# peut regrouper ceux en dessous de 800 occurences ensemble dans 'autre' et garder le nom des autres 
+# et faire one hot encoding avec 
+
+d = X_train.groupby('Origin').count()
+plt.hist(d.Year)
+
+# peut regrouper ceux en dessous de 60 000 occurences ensemble comme 'autres' et garder 
+# le vrai nom pour les autres puis faire one hot encoding
+
+# meme chose pour dest (repartition similaire) 
+
