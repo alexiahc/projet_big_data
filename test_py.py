@@ -31,6 +31,7 @@ X_train.groupby('UniqueCarrier').count()
 
 d = X_train.groupby('TailNum').count()
 d.sort_values(by=['Year'])
+plt.figure()
 plt.hist(d.Year[d.Year<1400])
 
 # TailNum 4030 diff -> garde les plus nombreux ? UNKNOWN 52000, max 1350, min à 1 
@@ -40,6 +41,7 @@ plt.hist(d.Year[d.Year<1400])
 # et faire one hot encoding avec 
 
 d = X_train.groupby('Origin').count()
+plt.figure()
 plt.hist(d.Year)
 
 # peut regrouper ceux en dessous de 60 000 occurences ensemble comme 'autres' et garder 
@@ -59,10 +61,31 @@ y_train.describe()
 
 # Flight number pas utile ? 
 
+#%% 
+
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import OrdinalEncoder
+from sklearn.impute import SimpleImputer
 
+enc_cols = [col for col in X_train.columns if (X_train[col].dtype == "object")]
 
+# flm de faire one hot encoding pour les tests pcq c long à calculer, c juste pour
+# pouvoir faire la matrice de correlation et les tests 
+
+encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value = -1)
+enc_cols_train = pd.DataFrame(encoder.fit_transform(X_train[enc_cols]), columns = enc_cols)
+enc_cols_train.index = X_train.index
+
+num_cols = [col for col in X_train.columns if (X_train[col].dtype != "object")]
+X_num = X_train[num_cols]
+
+X_train = pd.concat([enc_cols_train, X_num], axis=1)
+
+imp_cat = SimpleImputer(strategy='most_frequent')
+columns = X_train.columns
+index = X_train.index
+X_train = pd.DataFrame(imp_cat.fit_transform(X_train), columns=columns, index=index)
 
 #%%
 
