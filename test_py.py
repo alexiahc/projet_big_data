@@ -13,9 +13,9 @@ from sklearn.model_selection import train_test_split
 
 #%%
 df = pd.read_csv("2000.csv")
-
-for col in ["ArrTime", "ActualElapsedTime", "AirTime", "TaxiIn", "Diverted", "CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", "LateAircraftDelay"]:
-    df = df.drop(col, axis=1)
+df.drop(["ArrTime", "ActualElapsedTime", "AirTime", "TaxiIn", "Diverted", 
+         "CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", 
+         "LateAircraftDelay"], axis=1, inplace=True)
 #%%
 
 y = df.ArrDelay
@@ -137,11 +137,12 @@ sns.heatmap(np.corrcoef(train[cols].values.T), vmax=.8, linewidths=0.01,square=T
 # dist et CRSelapsed tim tjr 0.99 corr -> garde qu'un 
 # idem deptime et crsdeptime 
 
+X_train.drop(['CRSElapsedTime', 'CRSDepTime'] , axis=1, inplace=True)
 
-
+#%%
 from sklearn.feature_selection import SelectKBest, chi2
 
-fs_k_best_chi2 = SelectKBest(chi2, k=4)
+fs_k_best_chi2 = SelectKBest(k=4)
 fs_k_best_chi2.fit(X_train, y_train)
 col_filter = fs_k_best_chi2.get_support()
 df_k_best_chi2 = X_train.iloc[:, col_filter]
