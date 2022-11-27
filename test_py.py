@@ -105,6 +105,11 @@ columns = X_train.columns
 index = X_train.index
 X_train = pd.DataFrame(imp_cat.fit_transform(X_train), columns=columns, index=index)
 
+scaler = StandardScaler()
+
+# standardize the data 
+X_train = pd.DataFrame(scaler.fit_transform(X_train), columns = X_train.columns) 
+
 #%%
 
 import seaborn as sns 
@@ -119,13 +124,18 @@ f, ax = plt.subplots(figsize = (14,12))
 sns.heatmap(np.corrcoef(train[cols].values.T), vmax=.8, linewidths=0.01,square=True,annot=True,cmap='viridis',
             linecolor="white",xticklabels = cols.values ,annot_kws = {'size':12},yticklabels = cols.values)
 
-
+# sans données standardisée :
+    
 # correlation avec dep delay , taxi out, dep time ->> dep delay à 0.9 ?? bcp 
 # supp CRS dep time (mm que dep time)
 # supp crs elapsed time (mm que distance)
 
+# avec données standardisées :
+# correlation à moins de 0.001 -> pas de correlation lineaire 
+# besoin de croiser des colonnes 
 
-
+# dist et CRSelapsed tim tjr 0.99 corr -> garde qu'un 
+# idem deptime et crsdeptime 
 
 
 
