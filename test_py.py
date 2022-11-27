@@ -52,11 +52,22 @@ plt.hist(d.Year)
 # Tri des colonnes
 
 # cancellation code -> inutiles 
+X_train.drop('CancellationCode', axis=1, inplace=True)
+
 # changer nan en 0 pour DepTime -> correspond à non départ et à nan pour y_train 
 # valeur de non arrivage pour y_train ? 
+# X_train.DepTime.fillna(0)
 
+# ou est-ce que on garde slmt les lignes avec un delais a reelment prevoir ? 
+# di deptime est null alors arrdelay null aussi -> vire les lignes 
+# correspondante 
+# comment transcrire dans le modele ? ne prevoit que les données non nulles ? 
+X_train = X_train[X_train.DepTime.isnull()==False]
+index = X_train.index 
+
+y_train = y_train[index]
 y_train.describe()
-# min à -90 et max à 100 
+# min à -100 et max 100 environ 
 # choisit une valeur par défault ? ou peut garder nan ? 
 
 # Flight number pas utile ? 
