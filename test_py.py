@@ -120,6 +120,16 @@ sns.heatmap(np.corrcoef(train[cols].values.T), vmax=.8, linewidths=0.01,square=T
             linecolor="white",xticklabels = cols.values ,annot_kws = {'size':12},yticklabels = cols.values)
 
 
+# correlation avec dep delay , taxi out, dep time ->> dep delay à 0.9 ?? bcp 
+# supp CRS dep time (mm que dep time)
+# supp crs elapsed time (mm que distance)
+
+
+
+
+
+
+
 
 
 
