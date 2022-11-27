@@ -142,7 +142,7 @@ X_train.drop(['CRSElapsedTime', 'CRSDepTime'] , axis=1, inplace=True)
 #%%
 from sklearn.feature_selection import SelectKBest, chi2
 
-fs_k_best_chi2 = SelectKBest(k=4)
+fs_k_best_chi2 = SelectKBest(k=5)
 fs_k_best_chi2.fit(X_train, y_train)
 col_filter = fs_k_best_chi2.get_support()
 df_k_best_chi2 = X_train.iloc[:, col_filter]
