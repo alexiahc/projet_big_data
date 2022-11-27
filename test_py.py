@@ -79,7 +79,7 @@ X_train = X_train.loc[index]
 
 # Flight number pas utile ? 
 
-#%% 
+#%% PREPROCESSING FAIT ICI SLMT SUR TRAIN MAIS À FAIRE AUSSI SUR TEST 
 
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
@@ -137,6 +137,16 @@ sns.heatmap(np.corrcoef(train[cols].values.T), vmax=.8, linewidths=0.01,square=T
 # dist et CRSelapsed tim tjr 0.99 corr -> garde qu'un 
 # idem deptime et crsdeptime 
 
+
+
+from sklearn.feature_selection import SelectKBest, chi2
+
+fs_k_best_chi2 = SelectKBest(chi2, k=4)
+fs_k_best_chi2.fit(X_train, y_train)
+col_filter = fs_k_best_chi2.get_support()
+df_k_best_chi2 = X_train.iloc[:, col_filter]
+
+print(df_k_best_chi2)
 
 
 
