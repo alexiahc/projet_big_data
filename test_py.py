@@ -68,7 +68,14 @@ index = X_train.index
 y_train = y_train[index]
 y_train.describe()
 # min à -100 et max 100 environ 
-# choisit une valeur par défault ? ou peut garder nan ? 
+# pour les null, choisit une valeur par défault ? ou peut garder nan ? 
+# supprimer les colonnes ? car null pas de sens ici et peut pas trop 
+# remplacer sinon ça va fausser les resultats peut etre 
+
+# supprime les lignes avec null 
+y_train = y_train[y_train.isnull() == False]
+index = y_train.index
+X_train = X_train.loc[index]
 
 # Flight number pas utile ? 
 
