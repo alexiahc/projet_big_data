@@ -13,6 +13,8 @@ from sklearn.model_selection import train_test_split
 
 #%%
 df = pd.read_csv("2000.csv")
+
+# colonne a enlever des le debut (c'est dans le sujet)
 df.drop(["ArrTime", "ActualElapsedTime", "AirTime", "TaxiIn", "Diverted", 
          "CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", 
          "LateAircraftDelay"], axis=1, inplace=True)
