@@ -10,6 +10,8 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+import seaborn as sns
+import scipy.stats as stats
 
 #%%
 df = pd.read_csv("2000.csv")
@@ -56,6 +58,8 @@ plt.hist(d.Year)
 # cancellation code -> inutiles 
 X_train.drop('CancellationCode', axis=1, inplace=True)
 
+# Flight number pas utile ? 
+
 # changer nan en 0 pour DepTime -> correspond à non départ et à nan pour y_train 
 # valeur de non arrivage pour y_train ? 
 # X_train.DepTime.fillna(0)
@@ -79,7 +83,30 @@ y_train = y_train[y_train.isnull() == False]
 index = y_train.index
 X_train = X_train.loc[index]
 
-# Flight number pas utile ? 
+
+#%%
+
+plt.figure()
+plt.hist(y_train)
+
+plt.figure()
+plt.hist(np.log(y_train[y_train !=0]))
+# asymétrie pour les log(y_train) pour y_train non nul 
+#-> peut rendre la forme de y_train normale pour les modèles (applique log et peut etre 
+# asym)
+
+plt.figure()
+plt.hist(np.log(y_train[y_train!=0]),orientation = 'vertical',histtype = 'bar')
+
+plt.figure()
+sns.histplot(np.log(y_train[y_train!=0]), kde=True)
+
+plt.figure()
+sns.distplot(np.log(y_train[y_train!=0]), kde=False, fit=stats.lognorm)
+
+plt.figure()
+sns.distplot(np.log(y_train[y_train!=0]), kde=False, fit=stats.johnsonsu)
+
 
 #%% PREPROCESSING FAIT ICI SLMT SUR TRAIN MAIS À FAIRE AUSSI SUR TEST 
 
