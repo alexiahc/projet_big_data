@@ -14,7 +14,7 @@ import seaborn as sns
 import scipy.stats as stats
 
 #%%
-df = pd.read_csv("2000.csv")
+df = pd.read_csv("1994.csv")
 
 # colonne a enlever des le debut (c'est dans le sujet)
 df.drop(["ArrTime", "ActualElapsedTime", "AirTime", "TaxiIn", "Diverted", 
@@ -26,7 +26,7 @@ y = df.ArrDelay
 X = df.drop('ArrDelay', axis=1)
 
 X_train, X_test, y_train, y_test = train_test_split (X, y,
-                                                     test_size=0.5, random_state=1)
+                                                     test_size=0.9, random_state=1)
 
 X_train.dtypes
 
@@ -39,7 +39,7 @@ plt.figure()
 plt.hist(d.Year[d.Year<1400])
 
 index = d.index 
-cols_utiles = index[1:10]
+cols_utiles = index[1:6]
 def replace_categ(x):
     if x in cols_utiles:
         return x 
@@ -58,7 +58,7 @@ plt.figure()
 plt.hist(d.Year)
 
 index = d.index 
-cols_utiles = index[1:10]
+cols_utiles = index[1:6]
 def replace_categ(x):
     if x in cols_utiles:
         return x 
@@ -74,7 +74,7 @@ plt.figure()
 plt.hist(d.Year)
 
 index = d.index 
-cols_utiles = index[1:10]
+cols_utiles = index[1:6]
 def replace_categ(x):
     if x in cols_utiles:
         return x 
@@ -144,27 +144,33 @@ sns.distplot(np.log(y_train[y_train!=0]), kde=False, fit=stats.johnsonsu)
 
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import OrdinalEncoder
 from sklearn.impute import SimpleImputer
 
-enc_cols = [col for col in X_train.columns if (X_train[col].dtype == "object")]
-
-# flm de faire one hot encoding pour les tests pcq c long à calculer, c juste pour
-# pouvoir faire la matrice de correlation et les tests 
-
-encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value = -1)
-enc_cols_train = pd.DataFrame(encoder.fit_transform(X_train[enc_cols]), columns = enc_cols)
-enc_cols_train.index = X_train.index
-
-num_cols = [col for col in X_train.columns if (X_train[col].dtype != "object")]
-X_num = X_train[num_cols]
-
-X_train = pd.concat([enc_cols_train, X_num], axis=1)
-
 # one hot encoding 
-val_tailnum = 
 
+OH_cols = [col for col in X_train.columns if (X_train[col].dtype == "object")]
 
+OH_encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
+
+OH_encoder.fit(X[OH_cols])
+OH_cols_name = OH_encoder.get_feature_names_out(OH_cols)
+
+OH_cols_train = pd.DataFrame(OH_encoder.transform(X_train[OH_cols]), columns = OH_cols_name)
+# OH_cols_test = pd.DataFrame(OH_encoder.transform(X_test[OH_cols]), columns = OH_cols_name)
+
+OH_cols_train.index = X_train.index
+# OH_cols_test.index = X_test.index
+
+obj_cols = [col for col in X_train.columns if X_train[col].dtype == "object"]
+
+# take only numerical values to concatenate 
+num_X_train = X_train.drop(obj_cols, axis=1)
+# num_X_test = X_test.drop(obj_cols, axis=1)
+
+OH_X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
+# OH_X_test = pd.concat([num_X_test, OH_cols_test], axis=1)
+
+# pour les valeurs nulles restantes remplace par la plus frequente 
 imp_cat = SimpleImputer(strategy='most_frequent')
 columns = X_train.columns
 index = X_train.index
