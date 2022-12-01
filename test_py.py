@@ -34,12 +34,21 @@ X_train.groupby('UniqueCarrier').count()
 # col UniqueCarrier -> 11 diff peut faire one hot encoding 
 
 d = X_train.groupby('TailNum').count()
-d.sort_values(by=['Year'])
+d.sort_values(by=['Year'], ascending=False, inplace=True)
 plt.figure()
 plt.hist(d.Year[d.Year<1400])
 
+index = d.index 
+cols_utiles = index[1:10]
+def replace_categ(x):
+    if x in cols_utiles:
+        return x 
+    else:
+        return 'Autre'
+X_train.TailNum = X_train.TailNum.map(replace_categ)
+
 # TailNum 4030 diff -> garde les plus nombreux ? UNKNOWN 52000, max 1350, min à 1 
-# a voir si untilise slmt les 10 avec le plus de repetition ou si fait des quantiles 
+# a voir si utilise slmt les 10 avec le plus de repetition ou si fait des quantiles 
 # en fonction du nombre d'occurences ? 
 # peut regrouper ceux en dessous de 800 occurences ensemble dans 'autre' et garder le nom des autres 
 # et faire one hot encoding avec 
@@ -48,10 +57,33 @@ d = X_train.groupby('Origin').count()
 plt.figure()
 plt.hist(d.Year)
 
+index = d.index 
+cols_utiles = index[1:10]
+def replace_categ(x):
+    if x in cols_utiles:
+        return x 
+    else:
+        return 'Autre'
+X_train.Origin = X_train.Origin.map(replace_categ)
+
 # peut regrouper ceux en dessous de 60 000 occurences ensemble comme 'autres' et garder 
 # le vrai nom pour les autres puis faire one hot encoding
 
+d = X_train.groupby('Dest').count()
+plt.figure()
+plt.hist(d.Year)
+
+index = d.index 
+cols_utiles = index[1:10]
+def replace_categ(x):
+    if x in cols_utiles:
+        return x 
+    else:
+        return 'Autre'
+X_train.Dest = X_train.Dest.map(replace_categ)
+
 # meme chose pour dest (repartition similaire) 
+
 
 # Tri des colonnes
 
@@ -128,6 +160,10 @@ num_cols = [col for col in X_train.columns if (X_train[col].dtype != "object")]
 X_num = X_train[num_cols]
 
 X_train = pd.concat([enc_cols_train, X_num], axis=1)
+
+# one hot encoding 
+val_tailnum = 
+
 
 imp_cat = SimpleImputer(strategy='most_frequent')
 columns = X_train.columns
