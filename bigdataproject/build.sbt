@@ -10,5 +10,6 @@ lazy val root = project
     scalaVersion := scala2Version,
 
     libraryDependencies += "org.scalameta" %% "munit" % "0.7.29" % Test,
-    libraryDependencies += "org.apache.spark" %% "spark-core" % "3.3.0"
+    libraryDependencies += "org.apache.spark" %% "spark-core" % "3.3.0",
+    libraryDependencies += "org.apache.spark" %% "spark-sql" % "3.3.0"
   )
