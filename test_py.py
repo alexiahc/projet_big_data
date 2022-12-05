@@ -115,7 +115,6 @@ y_train = y_train[y_train.isnull() == False]
 index = y_train.index
 X_train = X_train.loc[index]
 
-
 #%%
 
 plt.figure()
@@ -152,7 +151,7 @@ OH_cols = [col for col in X_train.columns if (X_train[col].dtype == "object")]
 
 OH_encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
 
-OH_encoder.fit(X[OH_cols])
+OH_encoder.fit(X_train[OH_cols])
 OH_cols_name = OH_encoder.get_feature_names_out(OH_cols)
 
 OH_cols_train = pd.DataFrame(OH_encoder.transform(X_train[OH_cols]), columns = OH_cols_name)
@@ -167,7 +166,7 @@ obj_cols = [col for col in X_train.columns if X_train[col].dtype == "object"]
 num_X_train = X_train.drop(obj_cols, axis=1)
 # num_X_test = X_test.drop(obj_cols, axis=1)
 
-OH_X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
+X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
 # OH_X_test = pd.concat([num_X_test, OH_cols_test], axis=1)
 
 # pour les valeurs nulles restantes remplace par la plus frequente 
@@ -177,7 +176,6 @@ index = X_train.index
 X_train = pd.DataFrame(imp_cat.fit_transform(X_train), columns=columns, index=index)
 
 scaler = StandardScaler()
-
 # standardize the data 
 X_train = pd.DataFrame(scaler.fit_transform(X_train), columns = X_train.columns) 
 
