@@ -1,0 +1,7 @@
+[0m[[0m[31merror[0m] [0m[0mE:\upm\BigData\test\sparkapp\src\main\scala\MyApp.scala:10:9: not found: value Logger[0m
+[0m[[0m[31merror[0m] [0m[0m        Logger.getLogger("org").setLevel(Level.WARN);[0m
+[0m[[0m[31merror[0m] [0m[0m        ^[0m
+[0m[[0m[31merror[0m] [0m[0mE:\upm\BigData\test\sparkapp\src\main\scala\MyApp.scala:10:42: not found: value Level[0m
+[0m[[0m[31merror[0m] [0m[0m        Logger.getLogger("org").setLevel(Level.WARN);[0m
+[0m[[0m[31merror[0m] [0m[0m                                         ^[0m
+[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m
