@@ -39,7 +39,7 @@ plt.figure()
 plt.hist(d.Year[d.Year<1400])
 
 index = d.index 
-cols_utiles = index[1:6]
+cols_utiles = index[1:10]
 def replace_categ(x):
     if x in cols_utiles:
         return x 
@@ -58,7 +58,7 @@ plt.figure()
 plt.hist(d.Year)
 
 index = d.index 
-cols_utiles = index[1:6]
+cols_utiles = index[1:10]
 def replace_categ(x):
     if x in cols_utiles:
         return x 
@@ -74,7 +74,7 @@ plt.figure()
 plt.hist(d.Year)
 
 index = d.index 
-cols_utiles = index[1:6]
+cols_utiles = index[1:10]
 def replace_categ(x):
     if x in cols_utiles:
         return x 
@@ -115,7 +115,6 @@ y_train = y_train[y_train.isnull() == False]
 index = y_train.index
 X_train = X_train.loc[index]
 
-
 #%%
 
 plt.figure()
@@ -152,7 +151,7 @@ OH_cols = [col for col in X_train.columns if (X_train[col].dtype == "object")]
 
 OH_encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
 
-OH_encoder.fit(X[OH_cols])
+OH_encoder.fit(X_train[OH_cols])
 OH_cols_name = OH_encoder.get_feature_names_out(OH_cols)
 
 OH_cols_train = pd.DataFrame(OH_encoder.transform(X_train[OH_cols]), columns = OH_cols_name)
@@ -167,17 +166,15 @@ obj_cols = [col for col in X_train.columns if X_train[col].dtype == "object"]
 num_X_train = X_train.drop(obj_cols, axis=1)
 # num_X_test = X_test.drop(obj_cols, axis=1)
 
-OH_X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
+X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
 # OH_X_test = pd.concat([num_X_test, OH_cols_test], axis=1)
 
+#%%
 # pour les valeurs nulles restantes remplace par la plus frequente 
 imp_cat = SimpleImputer(strategy='most_frequent')
-columns = X_train.columns
-index = X_train.index
-X_train = pd.DataFrame(imp_cat.fit_transform(X_train), columns=columns, index=index)
+imp_cat.fit_transform(X_train)
 
 scaler = StandardScaler()
-
 # standardize the data 
 X_train = pd.DataFrame(scaler.fit_transform(X_train), columns = X_train.columns) 
 
@@ -208,12 +205,17 @@ sns.heatmap(np.corrcoef(train[cols].values.T), vmax=.8, linewidths=0.01,square=T
 # dist et CRSelapsed tim tjr 0.99 corr -> garde qu'un 
 # idem deptime et crsdeptime 
 
-X_train.drop(['CRSElapsedTime', 'CRSDepTime'] , axis=1, inplace=True)
+X_train.drop(['CRSElapsedTime', 'CRSDepTime', 'CRSArrTime'] , axis=1, inplace=True)
 
 #%%
 from sklearn.feature_selection import SelectKBest, chi2
 
-fs_k_best_chi2 = SelectKBest(k=5)
+# pb de valeur nulle ? a regler 
+X_train.drop(['Distance', 'TaxiOut'] , axis=1, inplace=True)
+
+#%%
+
+fs_k_best_chi2 = SelectKBest(k=4)
 fs_k_best_chi2.fit(X_train, y_train)
 col_filter = fs_k_best_chi2.get_support()
 df_k_best_chi2 = X_train.iloc[:, col_filter]
