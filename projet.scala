@@ -38,9 +38,42 @@ object MyApp {
 
     def preprocessing(data :){
         // split train test data ; target ArrDelay 
-        var Array(training, test) = data.randomSplit(Array[Double](0.8, 0.2))
 
-        // cleaning data 
+        var Array(x_train, x_test) = data.randomSplit(Array[Double](0.8, 0.2))
+        var y_train = x_train.select("ArrDelay")
+        var y_test = x_test.select("ArrDelay")
+        x_train = x_train.drop("ArrDelay")
+        x_test = x_test.drop("ArrDelay")
+        x_train = x_train.toDF()
+        x_test = x_test.toDF()
+
+        // exploring data
+        x_train.dtypes
+        // modifying the columns with object type 
+
+        // !!!!!!!!!! 
+        // pb sur les types -> trouver comment changer 
+        // de stringType à IntegerType / DoubleType 
+        // !!!!!!!!!!
+
+        val col_obj = List("UniqueCarrier", "TailNum", "Origin", "Dest")
+
+        for (c<-col_obj) {
+            val d = x_train.groupBy(col).count()
+            val nb_rows = d.count()
+            if (nb_rows > 10) {
+                d = d.sort(col("count").desc)
+                val cols = d.select("UniqueCarrier").take(5)
+                // remplace by "other" the values that aren't 
+                // in the list cols 
+
+
+            }
+
+        } 
+        // for the columns with more then 10 different 
+        // possible values, we modify the column to keep 
+        // only 10 different values 
 
         // process null val 
 
