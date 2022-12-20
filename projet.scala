@@ -64,12 +64,12 @@ object MyApp {
         // persist the database before the for ? 
         // ????????????????????
 
-        for (col<-col_obj) {
-            val d = x_train.groupBy(col).count()
+        for (c<-col_obj) {
+            var d = x_train.groupBy(c).count()
             val nb_rows = d.count()
             if (nb_rows > 10) {
                 d = d.sort(col("count").desc)
-                val cols = d.select(col).take(5)
+                val cols = d.select(c).take(5)
                 // remplace by "other" the values that aren't 
                 // in the list cols 
                 // map on the column 
