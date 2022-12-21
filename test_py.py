@@ -222,8 +222,12 @@ df_k_best_chi2 = X_train.iloc[:, col_filter]
 
 print(df_k_best_chi2)
 
+ ### creer un model de random forest + chercher l'accurary 
+ ### creer un model de k nearest neighbor + idem 
+ ### creer un model de gradient boosting + idem 
  
-
+ ## comparer les accuracy (peut tester avec différents paramètres 
+ # les modeles si besoin d'augmenter les accuracy)
 
 
 
