@@ -173,13 +173,14 @@ X_train = pd.concat([num_X_train, OH_cols_train], axis=1)
 # pour les valeurs nulles restantes remplace par la plus frequente 
 imp_cat = SimpleImputer(strategy='most_frequent')
 imp_cat.fit_transform(X_train)
+# imp_cat.transform(X_test)
 
 scaler = StandardScaler()
 # standardize the data 
 X_train = pd.DataFrame(scaler.fit_transform(X_train), columns = X_train.columns) 
+# X_test = pd.DataFrame(scaler.transform(X_test), columns = X_test.columns) 
 
 #%%
-
 import seaborn as sns 
 train = X_train.copy()
 train['ArrDelay'] = y_train.copy()
@@ -204,15 +205,14 @@ sns.heatmap(np.corrcoef(train[cols].values.T), vmax=.8, linewidths=0.01,square=T
 
 # dist et CRSelapsed tim tjr 0.99 corr -> garde qu'un 
 # idem deptime et crsdeptime 
-
 X_train.drop(['CRSElapsedTime', 'CRSDepTime', 'CRSArrTime'] , axis=1, inplace=True)
+X_test.drop(['CRSElapsedTime', 'CRSDepTime', 'CRSArrTime'] , axis=1, inplace=True)
 
-#%%
+#%% 
 from sklearn.feature_selection import SelectKBest, chi2
 
 # pb de valeur nulle ? a regler 
 X_train.drop(['Distance', 'TaxiOut'] , axis=1, inplace=True)
-
 #%%
 
 fs_k_best_chi2 = SelectKBest(k=4)
@@ -225,6 +225,11 @@ print(df_k_best_chi2)
  ### creer un model de random forest + chercher l'accurary 
  ### creer un model de k nearest neighbor + idem 
  ### creer un model de gradient boosting + idem 
+ ## en python en geenral ca se code :
+# from sklearn.ensemble import GradientBoostingRegressor
+# gbc = GradientBoostingRegressor()
+# gbc.set_params(n_estimators=n)
+# gbc.fit(X_train_mod, y_train_f)
  
  ## comparer les accuracy (peut tester avec différents paramètres 
  # les modeles si besoin d'augmenter les accuracy)
