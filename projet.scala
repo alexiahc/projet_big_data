@@ -6,7 +6,6 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.sql.types.{StructType, StructField, StringType, IntegerType}
 import org.apache.spark.sql.functions.col
 
-
 object MyApp {
     def main(args : Array[String]) {
         Logger.getLogger("org").setLevel(Level.WARN)
@@ -59,7 +58,9 @@ object MyApp {
         // de stringType à IntegerType / DoubleType 
         // !!!!!!!!!!
 
-
+        // pb avec 
+        // x_train = x_train.withColumn("DayOfWeek", x_train.select("DayOfWeek").cast(IntegerType))
+        // sur cast ?? 
 
         val col_obj = List("UniqueCarrier", "TailNum", "Origin", "Dest")
 
@@ -72,13 +73,11 @@ object MyApp {
             val nb_rows = d.count()
             if (nb_rows > 10) {
                 d = d.sort(col("count").desc)
-                val cols = d.select(c).take(5)
+                val cols = d.select(c).take(10)
                 // remplace by "other" the values that aren't 
                 // in the list cols 
                 // map on the column 
                 
-
-
             }
 
         } 

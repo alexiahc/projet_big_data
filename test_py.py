@@ -238,11 +238,3 @@ print(df_k_best_chi2)
  # les modeles si besoin d'augmenter les accuracy)
 
 
-
-
-
-
-
-
-
-
