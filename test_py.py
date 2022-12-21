@@ -231,6 +231,8 @@ print(df_k_best_chi2)
 # gbc = GradientBoostingRegressor()
 # gbc.set_params(n_estimators=n)
 # gbc.fit(X_train_mod, y_train_f)
+# gbc.score(X_valid, y_valid)
+# gbc.score(X_test, y_test)
  
  ## comparer les accuracy (peut tester avec différents paramètres 
  # les modeles si besoin d'augmenter les accuracy)
