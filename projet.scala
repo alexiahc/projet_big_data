@@ -3,6 +3,7 @@ import org.apache.spark.SparkConf
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.log4j.{Level, Logger}
+import org.apache.spark.sql.types.{StructType, StructField, StringType, IntegerType}
 
 object MyApp {
     def main(args : Array[String]) {
