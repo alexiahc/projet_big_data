@@ -5,7 +5,7 @@ Created on Thu Nov 24 15:46:33 2022
 
 @author: alexi
 """
-
+#test
 import pandas as pd 
 import numpy as np 
 import matplotlib.pyplot as plt
