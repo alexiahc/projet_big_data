@@ -213,6 +213,7 @@ from sklearn.feature_selection import SelectKBest, chi2
 
 # pb de valeur nulle ? a regler 
 X_train.drop(['Distance', 'TaxiOut'] , axis=1, inplace=True)
+X_test.drop(['Distance', 'TaxiOut'] , axis=1, inplace=True)
 #%%
 
 fs_k_best_chi2 = SelectKBest(k=4)
