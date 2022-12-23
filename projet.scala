@@ -31,8 +31,8 @@ object MyApp {
 
         // preprocessing 
         
-        
         // model training 
+
         // model test 
     }
     
@@ -113,7 +113,7 @@ object MyApp {
     }
 
     def test_model() {
-        // print accuracy / tab to choose best parameters ? 
+        // print accuracy and rmse to choose best parameters 
 
         // compare models 
         
