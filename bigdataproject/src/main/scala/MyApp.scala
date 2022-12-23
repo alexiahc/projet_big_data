@@ -43,7 +43,7 @@ object MyApp {
         // load data -> arg 1 = fichier csv des données 
         // var data = sc.read.option("header", true).csv(args[1])
         var data = spark.read.option("header", true).csv("D:/Cours/2000.csv")
-        data = data.drop("ArrTime", "ActualElapsedTime", "AirTime", "TaxiIn", "Diverted", "CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", "LateAircraftDelay", "CancellationCode") //"CancellationCode" because always null
+        data = data.drop("ArrTime", "ActualElapsedTime", "AirTime", "TaxiIn", "Diverted", "CarrierDelay", "WeatherDelay", "NASDelay", "SecurityDelay", "LateAircraftDelay") 
 
         // preprocessing 
 
@@ -56,6 +56,7 @@ object MyApp {
         data.show()
         val col_to_impute = Array("ArrDelay","DepDelay")
         val col_imputed = Array("ArrDelay_imputed","DepDelay_imputed")
+
         //if we needed to fill missing values we could use the code below but we don't need
         val imputer = new Imputer()
             .setInputCols(col_to_impute)
@@ -130,55 +131,94 @@ object MyApp {
     
 
     def preprocessing(data : DataFrame){
-        // split train test data ; target ArrDelay 
-
+        // split in train / test datasets
+        var Array(x_train, x_test) = data.randomSplit(Array[Double](0.8, 0.2))
         
-
         // exploring data
-        //x_train.dtypes
+        x_train.dtypes
+
+        //Print the number of missing values for each columns
+        data.select(data.columns.map(c => sum(col(c).isNull.cast("int")).alias(c)): _*).show
+
+        data = data.withColumn("ArrDelay", when(col("ArrDelay")==="NA", null).otherwise(col("ArrDelay"))).withColumn("ArrDelay",col("ArrDelay").cast("Integer"))
+        data = data.withColumn("DepDelay", when(col("DepDelay")==="NA", null).otherwise(col("DepDelay"))).withColumn("DepDelay",col("DepDelay").cast("Integer"))
+
         // modifying the columns with object type 
-
-        // !!!!!!!!!! 
-        // pb sur les types -> trouver comment changer 
-        // de stringType à IntegerType / DoubleType 
-        // !!!!!!!!!!
-
-
-        
-        //val col_obj = List("UniqueCarrier", "TailNum", "Origin", "Dest")
-
-        // ????????????????????
-        // persist the database before the for ? 
-        // ????????????????????
-    
-        /*for (c<-col_obj) {
+        val col_obj = List("UniqueCarrier", "TailNum", "Origin", "Dest")
+        for (c<-col_obj) {
             var d = x_train.groupBy(c).count()
             val nb_rows = d.count()
-            if (nb_rows > 10) {
+
+            // for the columns with more then 9 different 
+            // possible values, we modify the column to keep 
+            // only 10 different values 
+            if (nb_rows > 9) {
                 d = d.sort(col("count").desc)
-                val cols = d.select(c).take(5)
+                var values_util = d.select(c).map(f=>f.getString(0)).collect.toList
+                values_util = values_util.take(9)
                 // remplace by "other" the values that aren't 
-                // in the list cols 
-                // map on the column 
-            } 
-        }*/
+                // in the list values_util, which are the 9 values 
+                // the most frequent in the dataset 
+                x_train = x_train.withColumn(c, when(col(c).isin(values_util:_*), col(c)).otherwise("Other"))
+                x_test= x_test.withColumn(c, when(col(c).isin(values_util:_*), col(c)).otherwise("Other")) 
+            }
+        }
 
-            
+        // the cancellation code and the fligh number will not be usefull for the model
+        // The column CancellationCode has an information similar to the column DepTime, 
+        // because DepTime is null when CancellationCode is not 
+        // The FlightNum column gives a number that will not help for the model 
+        x_train = x_train.drop("CancellationCode", "FlightNum")
 
+        // If the value in the column DepTime is null, it means that the 
+        // fligh never started so the value in the column ArrDelay is also null
+        // We keep just the values that are interesting for us for a prediction model, 
+        // with not-null values for these two columns, in removing the rows 
+        // where ArrayDelay or DepTime is null 
+        x_train.filter(!col("DepTime").isNull)
+        x_train.filter(!col("ArrDelay").isNull)
+
+        // using the one-hot encoder to create new columns for categorical values 
+        //We create the arrays with the name of the categoricals values, we will use them for the one hot encoding.
+        val col_obj = Array("UniqueCarrier", "TailNum", "Origin", "Dest")
+        val indexed_obj = Array("IndexUniqueCarrier", "IndexTailNum", "IndexOrigin", "IndexDest") //Those features will correspond to the ordinal encoding
+        val encoded_obj = Array("NumUniqueCarrier", "NumTailNum", "NumOrigin", "NumDest") //Those features will correspond to the one hot encoding
+
+        //We extract the list of the values that are less recurent than 1000 values and we give them 'Other' as value
+        val inlist = data.groupBy("TailNum").count.orderBy(col("count").desc).where(col("count") < 1000).select("TailNum").map({r => r.getString(0)}).collect.toList
+
+        //We modify all the values that are in inlist and we give them the new value 'Other'
+        val df3 = data.withColumn("TailNum", when(data("TailNum").isin(inlist: _*),"Other").otherwise(col("TailNum")))
+
+        //We start to do the ordinal encoding because we need it to do the one hot encoding
+        val indexer = new StringIndexer()
+            .setInputCols(col_obj)
+            .setOutputCols(indexed_obj)
+            .fit(data)
+        val indexed = indexer.transform(data)
+
+        //Then we do the one hot encoding
+        val encoder = new OneHotEncoder()
+            .setInputCols(indexed_obj)
+            .setOutputCols(encoded_obj)
+
+        var data_encoded = encoder.fit(indexed).transform(indexed)
         
+        //We drop the temporary column that we used to encode
+        data_encoded = data_encoded.drop("UniqueCarrier", "TailNum", "Origin", "Dest","IndexUniqueCarrier", "IndexTailNum", "IndexOrigin", "IndexDest")
 
+        // remplacing the null values 
 
-        // for the columns with more then 10 different 
-        // possible values, we modify the column to keep 
-        // only 10 different values 
+        // removing the target column from the predictors 
+        var y_train = x_train.select("ArrDelay")
+        var y_test = x_test.select("ArrDelay")
+        x_train = x_train.drop("ArrDelay")
+        x_test = x_test.drop("ArrDelay")
+        x_train = x_train.toDF()
+        x_test = x_test.toDF()
 
-        // process null val 
+        // using algorithms to keep just the necessary columns for the model 
 
-        // change categ val ?
-
-        // choose col 
-
-        // choose crossing cols 
     }
 
     def test_model() {
