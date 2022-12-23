@@ -91,8 +91,9 @@ object MyApp {
         // fligh never started so the value in the column ArrDelay is also null
         // We keep just the values that are interesting for us for a prediction model, 
         // with not-null values for these two columns, in removing the rows 
-        // where ArrayDelay is null 
-        x_train.filter(!col("ArrDelay").isNull).show()
+        // where ArrayDelay or DepTime is null 
+        x_train.filter(!col("DepTime").isNull)
+        x_train.filter(!col("ArrDelay").isNull)
 
         // using the one-hot encoder to create new columns for categorical values 
 
