@@ -82,6 +82,9 @@ object MyApp {
         } 
         
         // the cancellation code and the fligh number will not be usefull for the model
+        // The column CancellationCode has an information similar to the column DepTime, 
+        // because DepTime is null when CancellationCode is not 
+        // The FlightNum column gives a number that will not help for the model 
         x_train = x_train.drop("CancellationCode", "FlightNum")
 
         // If the value in the column DepTime is null, it means that the 
