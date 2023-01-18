@@ -21,7 +21,7 @@ import org.apache.spark.ml.regression.LinearRegression
 import org.apache.spark.ml.evaluation.RegressionEvaluator
 
 // NOUVEAUX IMPORT À AJOUTER 
-import org.apache.spark.ml.{Pipeline, PipelineModel}
+import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.regression.RandomForestRegressor
 import org.apache.spark.ml.regression.GBTRegressor
 import org.apache.spark.ml.regression.DecisionTreeRegressor
@@ -143,11 +143,12 @@ object MyApp {
 // calculs en plus ? 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             var d = train.groupBy(c).count().persist()
-            val nb_rows = d.count()
 
-            if (nb_rows > 9) {
+            if (d.count() > 9) {
                 d = d.sort(col("count").desc)
                 var values_util = d.select(c).map(f=>f.getString(0)).collect.toList
+// PB AVEC LE COLLECT ET LE TO STRING 
+// MOYEN DE SELECTIONNER DIRECT DANS LA LISTE ? AVEC QUE LES 9 PREMIERS ? 
                 values_util = values_util.take(9)
                 // We remplace by "other" the values that aren't 
                 // in the list values_util, which are the 9 values 
@@ -341,6 +342,9 @@ object MyApp {
             .setLabelCol("ArrDelay")
             .setFeaturesCol("features")
             .setSeed(42)
+            .setMaxDepth(3)
+            .setNumTrees(20)
+            .setFeatureSubsetStrategy("auto")
         val rfModel = rf.fit(train)
 
         // prediction of the model on the test dataset 
@@ -362,6 +366,8 @@ object MyApp {
             .setFeaturesCol("features")
             .setMaxIter(5)
             .setMinWeightFractionPerNode(0.049)
+            .setMaxDepth(2)
+            .setSeed(24)
         val gbtModel = gbt.fit(train)
 
         // prediction of the model on the test dataset 
@@ -381,6 +387,8 @@ object MyApp {
         val dt = new DecisionTreeRegressor()
             .setLabelCol("ArrDelay")
             .setFeaturesCol("features")
+            .setMaxBins(10)
+            .setMaxDepth(2)
         val dtModel = dt.fit(train)
 
         // prediction of the model on the test dataset 
