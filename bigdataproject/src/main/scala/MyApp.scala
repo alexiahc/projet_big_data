@@ -55,7 +55,7 @@ object MyApp {
         // **************************************************************************
         
         // split in train / test datasets
-        var Array(train, test) = data.randomSplit(Array[Double](0.8, 0.2))
+        var Array(train, test) = data.randomSplit(Array[Double](0.7, 0.3))
 
         // **************************************************************************
         // DROP ROWS AND COLUMNS NOT USEFUL 
