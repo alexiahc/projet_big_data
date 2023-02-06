@@ -142,11 +142,10 @@ object MyApp {
 // peut etre chercher un autre moyen de le faire pour eviter des 
 // calculs en plus ? 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            var d = train.groupBy(c).count().persist()
+            var d = train.groupBy(c).count()
 
             if (d.count() > 9) {
-                d = d.sort(col("count").desc)
-                var values_util = d.select(c).map(f=>f.getString(0)).collect.toList
+                var values_util = d.sort(col("count").desc).select(c).map(f=>f.getString(0)).collect.toList
 // PB AVEC LE COLLECT ET LE TO STRING 
 // MOYEN DE SELECTIONNER DIRECT DANS LA LISTE ? AVEC QUE LES 9 PREMIERS ? 
                 values_util = values_util.take(9)
@@ -156,7 +155,6 @@ object MyApp {
                 train = train.withColumn(c, when(col(c).isin(values_util:_*), col(c)).otherwise("Other"))
                 test= test.withColumn(c, when(col(c).isin(values_util:_*), col(c)).otherwise("Other")) 
             }
-            d = d.unpersist()
         }
 
 
